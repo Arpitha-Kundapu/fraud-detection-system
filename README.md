@@ -1,15 +1,19 @@
-# End-to-End Fraud Detection System - Phase 1: Setup & EDA
+# End-to-End Fraud Detection System
 
-Welcome to the **End-to-End Fraud Detection System** workspace. This repository contains the foundational setup and exploratory data analysis (EDA) for detecting credit card fraud using machine learning.
+An end-to-end Machine Learning system for real-time credit card fraud detection using Python, Scikit-learn, FastAPI, Docker, and cloud deployment.
 
 ---
 
-## 1. Project Objective
+Welcome to the **End-to-End Fraud Detection System** workspace. This repository contains the foundational setup and exploratory data analysis (EDA) for detecting credit card fraud using machine learning.
+
+## Phase 1: Setup & EDA
+
+### 1. Project Objective
 The main goal of this system is to identify fraudulent credit card transactions in real-time. In this phase (Phase 1), we established a professional project structure, set up the development environment, generated a highly realistic synthetic dataset, and performed a comprehensive Exploratory Data Analysis (EDA) to guide our preprocessing and model design decisions.
 
 ---
 
-## 2. Dataset Description
+### 2. Dataset Description
 The dataset used in this project represents transactions made by credit cards. It is designed to mimic the standard Kaggle Credit Card Fraud Detection dataset, which contains transactions made by European cardholders in September 2013.
 
 *   **Total Transactions**: 30,000
@@ -23,7 +27,7 @@ The dataset used in this project represents transactions made by credit cards. I
 
 ---
 
-## 3. Folder Structure
+### 3. Folder Structure
 The repository is organized following professional, production-grade machine learning folder patterns:
 
 ```text
@@ -34,7 +38,7 @@ The repository is organized following professional, production-grade machine lea
 ├── setup.py                 # Setuptools config for editable installation of local src module
 ├── api/                     # API serving layer
 │   ├── __init__.py
-│   └── app.py               # FastAPI application script with serving endpoints
+│   └── app.py               # FastAPI application script with serving endpoints (placeholder)
 ├── data/                    # Local storage for raw and processed datasets (ignored by git)
 │   ├── raw/
 │   │   └── creditcard.csv   # Synthetic Credit Card Fraud dataset
@@ -46,15 +50,15 @@ The repository is organized following professional, production-grade machine lea
 │   └── eda.ipynb            # Interactive Exploratory Data Analysis notebook
 └── src/                     # Core system modules (packaged locally)
     ├── __init__.py
-    ├── data_pipeline.py     # Ingestion, cleaning, and preprocessing utilities
-    ├── feature_engineering.py # Categorical encoding, scaling, and time features
-    ├── model_pipeline.py    # Model training, evaluation, and loading utilities
+    ├── data_pipeline.py     # Ingestion, cleaning, and preprocessing utilities (placeholder)
+    ├── feature_engineering.py # Categorical encoding, scaling, and time features (placeholder)
+    ├── model_pipeline.py    # Model training, evaluation, and loading utilities (placeholder)
     └── utils.py             # Reproducibility seeding and logger configuration
 ```
 
 ---
 
-## 4. Technologies Used
+### 4. Technologies Used
 *   **Programming Language**: Python 3.13
 *   **Data Analysis & Manipulation**: `pandas`, `numpy`
 *   **Data Visualization**: `matplotlib`, `seaborn`
@@ -65,7 +69,7 @@ The repository is organized following professional, production-grade machine lea
 
 ---
 
-## 5. EDA Performed
+### 5. EDA Performed
 Within `notebooks/eda.ipynb`, we conducted the following diagnostic steps:
 1.  **First Five Rows Preview**: Inspected column formatting and index styling.
 2.  **Dataset Shape Check**: Verified total sample size (30,000) and column counts (31).
@@ -81,7 +85,7 @@ Within `notebooks/eda.ipynb`, we conducted the following diagnostic steps:
 
 ---
 
-## 6. Key Observations
+### 6. Key Observations
 *   **Class Imbalance**: Fraud represents only **0.17%** of transactions. Consequently, standard **Accuracy is a deficient metric**. We must optimize models using **Precision, Recall, F1-Score, and AUPRC**.
 *   **Scale Discrepancies**: Features `V1` through `V28` are already scaled. However, the `Amount` feature is unscaled, right-skewed, and ranges up to $15,000. It must be standard-scaled or log-transformed during preprocessing to prevent algorithm bias.
 *   **Cyclic Behavior**: Legitimate transactions decrease during night hours and peak during daytime hours. Fraudulent transactions do not show this day/night cyclical behavior and remain active even during normal sleep windows.
@@ -90,7 +94,7 @@ Within `notebooks/eda.ipynb`, we conducted the following diagnostic steps:
 
 ---
 
-## 7. Next Phase: Phase 2 (Preprocessing and Modeling)
+### 7. Next Phase: Phase 2 (Preprocessing and Modeling)
 Building upon our Phase 1 findings, the next phase will encompass:
 1.  **Data Preprocessing**: Implementing robust scaling for the `Amount` and `Time` features.
 2.  **Imbalance Mitigation**: Training models using class weighting or resampling algorithms (such as SMOTE).
