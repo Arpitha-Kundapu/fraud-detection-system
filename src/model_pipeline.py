@@ -1,11 +1,11 @@
 import os
-import joblib
-import numpy as np
-from loguru import logger
-from sklearn.linear_model import LogisticRegression
-from sklearn.ensemble import RandomForestClassifier
-from xgboost import XGBClassifier
-from sklearn.metrics import (
+import joblib  # pyright: ignore [reportMissingImports]
+import numpy as np  # pyright: ignore [reportMissingImports]
+from loguru import logger  # pyright: ignore [reportMissingImports]
+from sklearn.linear_model import LogisticRegression  # pyright: ignore [reportMissingImports]
+from sklearn.ensemble import RandomForestClassifier  # pyright: ignore [reportMissingImports]
+from xgboost import XGBClassifier  # pyright: ignore [reportMissingImports]
+from sklearn.metrics import (  # pyright: ignore [reportMissingImports]
     accuracy_score,
     precision_score,
     recall_score,
@@ -14,8 +14,8 @@ from sklearn.metrics import (
     average_precision_score,
     classification_report
 )
-from sklearn.pipeline import Pipeline
-from src.feature_engineering import TransactionTransformer
+from sklearn.pipeline import Pipeline  # pyright: ignore [reportMissingImports]
+from src.feature_engineering import TransactionTransformer  # pyright: ignore [reportMissingImports]
 
 def train_logistic_regression(X_train, y_train, seed: int = 42) -> LogisticRegression:
     """Trains a Logistic Regression model with class weighting."""

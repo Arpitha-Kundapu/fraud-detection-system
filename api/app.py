@@ -1,9 +1,9 @@
 import os
-import pandas as pd
-from fastapi import FastAPI, HTTPException
-from pydantic import BaseModel, Field
+import pandas as pd  # pyright: ignore [reportMissingImports]
+from fastapi import FastAPI, HTTPException  # pyright: ignore [reportMissingImports]
+from pydantic import BaseModel, Field  # pyright: ignore [reportMissingImports]
 from typing import List
-from loguru import logger
+from loguru import logger  # pyright: ignore [reportMissingImports]
 from src.utils import setup_logging, load_env_variables
 from src.model_pipeline import load_pipeline
 

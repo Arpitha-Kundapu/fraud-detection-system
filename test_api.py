@@ -1,7 +1,7 @@
 import os
 import sys
 import unittest
-from fastapi.testclient import TestClient
+from fastapi.testclient import TestClient  # pyright: ignore [reportMissingImports]
 
 # Ensure package src is importable
 sys.path.append(os.path.abspath("."))
@@ -9,7 +9,7 @@ sys.path.append(os.path.abspath("."))
 # Set model path env before importing app
 os.environ["MODEL_PATH"] = "models/fraud_model_pipeline.joblib"
 
-from api.app import app
+from api.app import app  # pyright: ignore [reportMissingImports]
 
 class TestFraudAPI(unittest.TestCase):
     def test_health_endpoint(self):

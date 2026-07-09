@@ -1,8 +1,8 @@
 import os
-import numpy as np
-import pandas as pd
-from sklearn.model_selection import train_test_split
-from loguru import logger
+import numpy as np  # pyright: ignore [reportMissingImports]
+import pandas as pd  # pyright: ignore [reportMissingImports]
+from sklearn.model_selection import train_test_split  # pyright: ignore [reportMissingImports]
+from loguru import logger  # pyright: ignore [reportMissingImports]
 
 def generate_synthetic_data(filepath: str, seed: int = 42) -> pd.DataFrame:
     """
