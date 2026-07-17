@@ -15,6 +15,7 @@ from sklearn.metrics import (  # pyright: ignore [reportMissingImports]
     classification_report
 )
 from sklearn.pipeline import Pipeline  # pyright: ignore [reportMissingImports]
+from sklearn.model_selection import GridSearchCV, StratifiedKFold  # pyright: ignore [reportMissingImports]
 from src.feature_engineering import TransactionTransformer  # pyright: ignore [reportMissingImports]
 
 def train_logistic_regression(X_train, y_train, seed: int = 42) -> LogisticRegression:
@@ -24,6 +25,34 @@ def train_logistic_regression(X_train, y_train, seed: int = 42) -> LogisticRegre
     model.fit(X_train, y_train)
     logger.info("Logistic Regression training complete.")
     return model
+
+def tune_logistic_regression(X_train, y_train, seed: int = 42) -> tuple[LogisticRegression, dict]:
+    """
+    Performs GridSearchCV on Logistic Regression to optimize hyperparameters
+    using Average Precision (PR-AUC) as the scoring metric.
+    """
+    logger.info("Starting GridSearchCV for Logistic Regression tuning...")
+    param_grid = {
+        "C": [0.001, 0.01, 0.1, 1.0, 10.0, 100.0],
+        "penalty": ["l2"],
+        "solver": ["lbfgs", "liblinear"]
+    }
+    base_model = LogisticRegression(class_weight="balanced", random_state=seed, max_iter=1000)
+    cv = StratifiedKFold(n_splits=5, shuffle=True, random_state=seed)
+    
+    grid_search = GridSearchCV(
+        estimator=base_model,
+        param_grid=param_grid,
+        scoring="average_precision",
+        cv=cv,
+        n_jobs=-1,
+        verbose=1
+    )
+    grid_search.fit(X_train, y_train)
+    logger.info(f"GridSearchCV complete. Best parameters: {grid_search.best_params_}")
+    logger.info(f"Best CV Average Precision: {grid_search.best_score_:.4f}")
+    return grid_search.best_estimator_, grid_search.best_params_
+
 
 def train_random_forest(X_train, y_train, seed: int = 42) -> RandomForestClassifier:
     """Trains a Random Forest model with class weighting."""
