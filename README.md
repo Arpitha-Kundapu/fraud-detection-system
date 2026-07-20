@@ -7,10 +7,11 @@ An end-to-end Machine Learning system for real-time credit card fraud detection 
 ## Project Roadmap
 
 The development of this system is structured into six sequential phases:
+The development of this system is structured into six sequential phases:
 1. **Phase 1: Environment Setup & Exploratory Data Analysis (EDA)** (Completed)
 2. **Phase 2: Data Preprocessing & Handling Class Imbalance** (Completed)
-3. **Phase 3: Model Training & Evaluation** (Active - Step 1 Completed)
-4. **Phase 4: API serving with FastAPI** (Future Phase)
+3. **Phase 3: Model Training & Evaluation** (Completed)
+4. **Phase 4: REST API Serving with FastAPI** (Completed)
 5. **Phase 5: Containerization with Docker** (Future Phase)
 6. **Phase 6: Cloud Deployment & Monitoring** (Future Phase)
 
@@ -50,18 +51,33 @@ Building upon the Phase 1 findings, Phase 2 implements data preprocessing and ha
 
 ### 2. Imbalance Mitigation (`src/data_pipeline.py`)
 *   Uses **stratified splitting** (`stratify=Class`) to preserve the 0.17% minority class proportion across training (80%) and testing (20%) splits.
+*   Provides `apply_smote()` synthetic oversampling using `imbalanced-learn` alongside class weighting (`class_weight="balanced"` and `scale_pos_weight`).
 
 ---
 
-## Phase 3: Model Training & Evaluation (Active - Step 1 Completed)
+## Phase 3: Model Training & Evaluation (Completed)
 
-In this phase, we implement model training, hyperparameter tuning, validation curves, and model serialization.
+In this phase, we implement full model training, hyperparameter tuning, evaluation curves, and pipeline serialization:
+*   **Models Trained**: Baseline Logistic Regression, Tuned Logistic Regression (GridSearchCV), Random Forest, and XGBoost.
+*   **Metrics Evaluated**: Precision, Recall, F1-Score, ROC-AUC, and Precision-Recall AUC (PR-AUC).
+*   **Visualizations Generated**: Multi-panel evaluation plots saved in `reports/figures/` (`confusion_matrices.png`, `roc_curves.png`, `precision_recall_curves.png`, `feature_importances.png`).
+*   **Model Serialization**: Best model selected by PR-AUC and serialized to `models/fraud_model_pipeline.joblib`.
 
-### Step 1: Data Ingestion, Splitting, and Preprocessing (Completed)
-We run the offline data pipeline to load, split, and preprocess the dataset, saving the processed splits as CSV files for training:
-*   **Train Size**: 24,000 samples (23,959 Legitimate, 41 Fraudulent)
-*   **Test Size**: 6,000 samples (5,990 Legitimate, 10 Fraudulent)
-*   **Output Files**: Saved to `data/processed/train_processed.csv` and `data/processed/test_processed.csv`
+---
+
+## Phase 4: REST API Serving with FastAPI (Completed)
+
+Phase 4 wraps the trained model pipeline into a production-ready asynchronous REST API using **FastAPI**, **Pydantic**, and **Uvicorn**:
+
+### 1. API Endpoints
+*   `GET /health`: Health check verifying server status, model loaded state, and model version.
+*   `POST /predict`: Real-time prediction endpoint for a single transaction input (JSON payload with `Time`, `V1`..`V28`, `Amount`). Returns `is_fraud`, `probability`, and `model_version`.
+*   `POST /predict/batch`: High-throughput batch prediction endpoint processing a list of transactions in a single vectorized DataFrame call.
+
+### 2. Validation & Lifespan Architecture
+*   Pydantic schema validation for strict type and structure enforcement on input features.
+*   FastAPI `@asynccontextmanager` `lifespan` handler to efficiently load the serialized model pipeline into memory once at application startup.
+*   Auto-generated interactive Swagger UI documentation at `http://127.0.0.1:8000/docs`.
 
 ---
 
@@ -129,9 +145,22 @@ pip install -r requirements.txt
 pip install -e .
 ```
 
-### Run Phase 3 Step 1 Data Processing
-To run the ingestion, splitting, preprocessing, and class distribution verification:
+### 1. Run Model Training & Pipeline Serialization
+Train all models, evaluate metrics, generate figures, and save the model pipeline:
 ```powershell
 python train.py
 ```
-This generates `train_processed.csv` and `test_processed.csv` inside `data/processed/`.
+
+### 2. Launch FastAPI REST API Server (Phase 4)
+Start the local server with Uvicorn:
+```powershell
+uvicorn api.app:app --reload --port 8000
+```
+- Access Interactive Swagger UI Docs: http://127.0.0.1:8000/docs
+- Health check endpoint: http://127.0.0.1:8000/health
+
+### 3. Run API Test Suite
+Run the automated integration test suite:
+```powershell
+python test_api.py
+```

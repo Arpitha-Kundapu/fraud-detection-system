@@ -295,7 +295,7 @@ def main():
     best_model = models_dict[best_model_name]
     logger.info(f"Best model selected: {best_model_name} with PR-AUC of {metrics_dict[best_model_name]['pr_auc']:.4f}")
     
-    pipeline_path = "models/fraud_detection_pipeline.pkl"
+    pipeline_path = "models/fraud_model_pipeline.joblib"
     build_and_save_pipeline(transformer, best_model, pipeline_path)
     logger.info(f"Successfully saved end-to-end best model pipeline to {pipeline_path}")
 

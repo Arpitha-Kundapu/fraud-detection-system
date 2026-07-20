@@ -7,15 +7,11 @@ from loguru import logger  # pyright: ignore [reportMissingImports]
 from src.utils import setup_logging, load_env_variables
 from src.model_pipeline import load_pipeline
 
+from contextlib import asynccontextmanager
+
 # Initialize configurations
 setup_logging("INFO")
 load_env_variables()
-
-app = FastAPI(
-    title="Real-Time Fraud Detection System API",
-    description="REST API for predicting credit card transaction fraud probability and classification.",
-    version="1.0.0"
-)
 
 # Global variables
 model_pipeline = None
@@ -60,10 +56,14 @@ class PredictResponse(BaseModel):
 class BatchPredictResponse(BaseModel):
     predictions: List[PredictResponse]
 
-@app.on_event("startup")
-def startup_event():
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    """Lifespan context manager for loading serialized model pipeline at startup."""
     global model_pipeline
     model_path = os.getenv("MODEL_PATH", "models/fraud_model_pipeline.joblib")
+    if not os.path.exists(model_path) and os.path.exists("models/fraud_detection_pipeline.pkl"):
+        model_path = "models/fraud_detection_pipeline.pkl"
+        
     logger.info(f"Loading serialized model pipeline from {model_path} during startup...")
     try:
         model_pipeline = load_pipeline(model_path)
@@ -71,6 +71,15 @@ def startup_event():
     except Exception as e:
         logger.error(f"Failed to load model pipeline at startup: {e}")
         raise RuntimeError(f"Startup failed: could not load model pipeline.")
+    yield
+    logger.info("Shutting down FastAPI application.")
+
+app = FastAPI(
+    title="Real-Time Fraud Detection System API",
+    description="REST API for predicting credit card transaction fraud probability and classification.",
+    version="1.0.0",
+    lifespan=lifespan
+)
 
 @app.get("/health")
 def health_check():

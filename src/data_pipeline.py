@@ -105,3 +105,15 @@ def split_data(df: pd.DataFrame, test_size: float = 0.2, seed: int = 42) -> tupl
     )
     logger.info(f"Split complete. Train size: {train_df.shape[0]}, Test size: {test_df.shape[0]}")
     return train_df, test_df
+
+def apply_smote(X_train, y_train, seed: int = 42) -> tuple[pd.DataFrame, np.ndarray]:
+    """
+    Applies Synthetic Minority Oversampling Technique (SMOTE) on the training set only
+    to synthetically balance the fraud class ratio.
+    """
+    from imblearn.over_sampling import SMOTE  # pyright: ignore [reportMissingImports]
+    logger.info("Applying SMOTE oversampling on training data...")
+    smote = SMOTE(random_state=seed)
+    X_resampled, y_resampled = smote.fit_resample(X_train, y_train)
+    logger.info(f"SMOTE oversampling complete. Resampled shape: {X_resampled.shape}, Fraud samples: {(y_resampled == 1).sum()}")
+    return X_resampled, y_resampled
